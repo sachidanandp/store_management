@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -20,14 +21,18 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.sachidanand.storemanagement.R
+import androidx.navigation.toRoute
 import com.sachidanand.storemanagement.presentation.navigation.Screens
 import com.sachidanand.storemanagement.domain.model.BottomNavigationItem
-import com.sachidanand.storemanagement.presentation.components.AddItemBottomPopup
-import com.sachidanand.storemanagement.presentation.components.AnimatedAddButton
+import com.sachidanand.storemanagement.domain.model.Priority
+import com.sachidanand.storemanagement.domain.model.StoreItem
+import com.sachidanand.storemanagement.presentation.components.dialog.addItemBottomPopup
+import com.sachidanand.storemanagement.presentation.navigation.ScreensObject
+import com.sachidanand.storemanagement.presentation.screens.AddStoreItemScreen
+import com.sachidanand.storemanagement.presentation.screens.DetailsStoreItemScreen
+import com.sachidanand.storemanagement.presentation.screens.EditStoreItemScreen
 import com.sachidanand.storemanagement.presentation.screens.HomeScreen
 import com.sachidanand.storemanagement.presentation.theme.StoreManagementTheme
-import com.sachidanand.storemanagement.utils.UiText
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,13 +45,36 @@ class MainActivity : ComponentActivity() {
                     mutableIntStateOf(0)
                 }
                 val navController = rememberNavController()
+                val stores = rememberSaveable {
+                    mutableListOf(
+                        StoreItem(
+                            1,
+                            "Dolo 650",
+                            "Paracetamol",
+                            Priority.High,
+                            1716462316220L,
+                            10,
+                            true
+                        ),
+                        StoreItem(2, "Alex syrup", "Syrup", Priority.Low, 340L, 10, false),
+                        StoreItem(1, "Dolo 650", "Paracetamol", Priority.High, 340L, 10, true),
+                        StoreItem(1, "Dolo 650", "Paracetamol", Priority.High, 340L, 10, true),
+                        StoreItem(1, "Dolo 650", "Paracetamol", Priority.High, 340L, 10, true),
+                        StoreItem(1, "Dolo 650", "Paracetamol", Priority.High, 340L, 10, true),
+                        StoreItem(1, "Dolo 650", "Paracetamol", Priority.High, 340L, 10, true),
+                        StoreItem(1, "Dolo 650", "Paracetamol", Priority.High, 340L, 10, true),
+                        StoreItem(1, "Dolo 650", "Paracetamol", Priority.High, 340L, 10, true),
+
+                        )
+                }
 
                 var showSheet by remember { mutableStateOf(false) }
 
                 if (showSheet) {
-                    AddItemBottomPopup {
+                    val storeItem = addItemBottomPopup {
                         showSheet = false
                     }
+                    stores.add(storeItem)
                 }
 
                 Scaffold(
@@ -80,14 +108,22 @@ class MainActivity : ComponentActivity() {
                                 }
                         }
                     },
-                    floatingActionButton = {
+                    /*floatingActionButton = {
+                        val context = LocalContext.current
                         AnimatedAddButton(
                             value = UiText.StringResource(R.string.new_item),
                             onClick = {
-                                showSheet = true
+                                //showSheet = true
+                                //navController.navigate(Screens.AddStoreItem.route)
+                                context.startActivity(
+                                    Intent(
+                                        context,
+                                        AddStoreItemActivity::class.java
+                                    )
+                                )
                             }
                         )
-                    }
+                    }*/
                 ) { paddingValues ->
                     NavHost(
                         navController = navController,
@@ -95,14 +131,45 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(paddingValues)
                     ) {
                         //Map Screens based on their routes
-                        composable(Screens.Home.route) {
-                            HomeScreen(navController, modifier = Modifier)
+                        composable(route = Screens.Home.route) {
+                            HomeScreen(navController, modifier = Modifier, stores)
                         }
                         composable(Screens.Calender.route) {
-                            //CalenderScreen(navController)
+                            //AddStoreItemScreen(navController)
                         }
                         composable(Screens.Settings.route) {
                             //SettingsScreen(navController)
+                        }
+                        composable(Screens.AddStoreItem.route) {
+                            AddStoreItemScreen(navController = navController)
+                        }
+                        composable<ScreensObject.EditStoreItem> {
+                            val storeItem = it.toRoute<ScreensObject.EditStoreItem>()
+                            EditStoreItemScreen(
+                                navController = navController,
+                                storeItem.itemName,
+                                storeItem.itemId,
+                                storeItem.itemDescription,
+                                storeItem.quantity,
+                                storeItem.createdOn,
+                                storeItem.inStore,
+                                priority = storeItem.priority
+                            )
+                        }
+
+                        composable<ScreensObject.DetailStoreItemScreen> {
+                            val storeItem = it.toRoute<ScreensObject.DetailStoreItemScreen>()
+                            DetailsStoreItemScreen(
+                                navController = navController,
+                                modifier = Modifier,
+                                storeName = storeItem.itemName,
+                                itemId = storeItem.itemId,
+                                itemDescription = storeItem.itemDescription,
+                                quantity = storeItem.quantity,
+                                createdOn = storeItem.createdOn,
+                                inStore = storeItem.inStore,
+                                priority = storeItem.priority
+                            )
                         }
                     }
                 }

@@ -44,7 +44,7 @@ import com.sachidanand.storemanagement.domain.model.StoreItem
  */
 @SuppressLint("UnusedTransitionTargetStateParameter")
 @Composable
-fun StoreView(store: StoreItem) {
+fun StoreView(store: StoreItem, onClick: () -> Unit) {
 
     var isCompleted by remember {
         mutableStateOf(store.inStore)
@@ -52,7 +52,8 @@ fun StoreView(store: StoreItem) {
 
     Card(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        onClick = onClick
     ) {
         Row(
             modifier = Modifier.padding(16.dp)
@@ -67,16 +68,18 @@ fun StoreView(store: StoreItem) {
             )
             Spacer(modifier = Modifier.width(8.dp))
             Column {
-                Text(
-                    text = store.itemName,
-                    style = TextStyle(
-                        fontSize = 16.sp,
-                        fontWeight = FontWeight.Bold
-                    ),
-                    maxLines = 3,
-                    overflow = TextOverflow.Ellipsis,
-                    textDecoration = if (isCompleted) TextDecoration.LineThrough else TextDecoration.None
-                )
+                store?.itemName?.let {
+                    Text(
+                        text = it,
+                        style = TextStyle(
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        ),
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                        textDecoration = if (isCompleted) TextDecoration.LineThrough else TextDecoration.None
+                    )
+                }
                 Row(
                     modifier = Modifier
                         .padding(top = 6.dp, end = 6.dp)
@@ -86,16 +89,18 @@ fun StoreView(store: StoreItem) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(
-                            text = store.itemDescription,
-                            style = TextStyle(
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.Medium
-                            ),
-                            modifier = Modifier
-                                .align(Alignment.CenterVertically)
-                        )
+                        store.itemDescription?.let {
+                            Text(
+                                text = it,
+                                style = TextStyle(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Medium
+                                ),
+                                modifier = Modifier
+                                    .align(Alignment.CenterVertically)
+                            )
+                        }
                     }
                     Text(
                         text = store.quantity.toString(),
@@ -120,5 +125,5 @@ fun StoreView(store: StoreItem) {
 @Preview
 @Composable
 fun TaskViewPreview() {
-    StoreView(store = StoreItem(1, "Item 1", "New Item", Priority.Low, 330L, 10, true))
+    StoreView(store = StoreItem(1, "Item 1", "New Item", Priority.Low, 330L, 10, true), onClick = {})
 }

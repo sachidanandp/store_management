@@ -21,7 +21,7 @@ import com.sachidanand.storemanagement.utils.UiText
  * Created by Sachidanand on 10-05-2024.
  */
 @Composable
-fun AnimatedAddButton(value: UiText, onClick: () -> Unit) {
+fun AnimatedAddButton(value: UiText, onClick: () -> Unit, modifier: Modifier) {
     var isExpanded by remember { mutableStateOf(false) }
 
     ExtendedFloatingActionButton(
@@ -31,8 +31,7 @@ fun AnimatedAddButton(value: UiText, onClick: () -> Unit) {
             isExpanded = !isExpanded
             onClick()
         },
-        modifier = Modifier
-            .padding(16.dp)
+        modifier = modifier
             .sizeIn(minWidth = 56.dp, minHeight = 56.dp)
 
     )
