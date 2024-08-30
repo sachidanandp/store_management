@@ -34,6 +34,7 @@ import com.sachidanand.storemanagement.presentation.screens.EditStoreItemScreen
 import com.sachidanand.storemanagement.presentation.screens.HomeScreen
 import com.sachidanand.storemanagement.presentation.theme.StoreManagementTheme
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -2,7 +2,11 @@ plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
     alias(libs.plugins.kotlinx.serialization)
+    //id(libs.plugins.hilt.plugin.get().pluginId)
     id ("kotlin-parcelize")
+    //id(libs.plugins.kotlin.kapt.get().pluginId)
+    id ("kotlin-kapt")
+    id("com.google.dagger.hilt.android") version "2.48" apply false
 }
 
 android {
@@ -66,6 +70,18 @@ dependencies {
     implementation(libs.constraint.layout)
     implementation(libs.material)
 
+    // Lifecycle
+    implementation(libs.viewmodel.compose)
+    implementation(libs.viewmodel.ktx)
+    implementation(libs.livedata.ktx)
+    implementation(libs.runtime.ktx)
+
+    // Hilt
+    //implementation(libs.hilt)
+    //kapt(libs.hilt.compiler)
+    //androidTestImplementation(libs.hilt.testing)
+    implementation("com.google.dagger:hilt-android:2.48")
+    kapt("com.google.dagger:hilt-android-compiler:2.48")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -74,4 +90,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes = true
 }
